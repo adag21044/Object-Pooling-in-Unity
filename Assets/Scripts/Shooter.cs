@@ -4,30 +4,28 @@ using UnityEngine;
 
 public class Shooter : MonoBehaviour
 {
-    public BulletController bulletPrefab;
-    public int bulletPoolSize = 10;
-
-    private void Start()
-    {
-        if (bulletPrefab == null)
-        {
-            
-            return;
-        }
-        ObjectPooler.SetupPool(bulletPrefab, bulletPoolSize, "Bullet");
-    }
-
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
         {
-            BulletController instance = ObjectPooler.DequeueObject<BulletController>("Bullet");
-            if (instance != null)
-            {
-                instance.transform.position = transform.position; // Shooter's position
-                instance.gameObject.SetActive(true);
-                instance.SetTarget(Camera.main.ScreenToWorldPoint(Input.mousePosition));
-            }
+            Shoot();
+        }
+    }
+
+    private void Shoot()
+    {
+        if (ObjectPooler.Instance == null)
+        {
+            Debug.LogError("ObjectPooler instance is not available.");
+            return;
+        }
+
+        BulletController instance = ObjectPooler.Instance.DequeueObject<BulletController>();
+        if (instance != null)
+        {
+            instance.transform.position = transform.position;
+            instance.SetTarget(Camera.main.ScreenToWorldPoint(Input.mousePosition));
+            instance.gameObject.SetActive(true);
         }
     }
 }

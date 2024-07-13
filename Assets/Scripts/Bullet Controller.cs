@@ -2,21 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BulletController : MonoBehaviour
+public class BulletController : MonoBehaviour, IPoolable
 {
     private Vector3 targetPosition;
     public float speed = 10f;
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (gameObject.activeSelf)
         {
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
-            if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
-            {
-                ObjectPooler.EnqueueObject(this, "Bullet");
-            }
+            MoveTowardsTarget();
+        }
+    }
+
+    private void MoveTowardsTarget()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
+        if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
+        {
+            ObjectPooler.Instance.EnqueueObject(this);
         }
     }
 
@@ -25,4 +29,19 @@ public class BulletController : MonoBehaviour
         target.z = 0; // Ensure the bullet moves in 2D plane
         targetPosition = target;
     }
+
+    public void OnSpawn()
+    {
+        // Logic to execute when the object is spawned from the pool
+    }
+
+    public void OnDespawn()
+    {
+        // Logic to execute when the object is returned to the pool
+    }
+}
+public interface IPoolable
+{
+    void OnSpawn();
+    void OnDespawn();
 }
