@@ -5,7 +5,7 @@ using UnityEngine;
 public class BulletController : MonoBehaviour, IPoolable
 {
     private Vector3 targetPosition;
-    public float speed = 10f;
+    public float speed = 5f;
 
     private void Update()
     {
@@ -15,9 +15,12 @@ public class BulletController : MonoBehaviour, IPoolable
         }
     }
 
-    private void MoveTowardsTarget()
+    private void MoveTowardsTarget()    
     {
+        var direction = targetPosition - new Vector3(0, 0, 0);
+        direction.Normalize();
         transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
+        transform.up = direction;
         if (Vector3.Distance(transform.position, targetPosition) < 0.1f)
         {
             ObjectPooler.Instance.EnqueueObject(this);
