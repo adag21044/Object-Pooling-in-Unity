@@ -1,25 +1,25 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
     public BulletController bulletPrefab;
     public int bulletPoolSize = 10;
+    private ObjectPooler objectPooler;
 
     private void Awake()
     {
+        objectPooler = ObjectPooler.Instance;
+        if (objectPooler == null)
+        {
+            Debug.LogError("ObjectPooler instance is not available.");
+            return;
+        }
+        
         InitializeObjectPooler();
     }
 
     private void InitializeObjectPooler()
     {
-        if (ObjectPooler.Instance == null)
-        {
-            Debug.LogError("ObjectPooler instance is not available.");
-            return;
-        }
-
-        ObjectPooler.Instance.SetupPool(bulletPrefab, bulletPoolSize);
+        objectPooler.SetupPool(bulletPrefab, bulletPoolSize);
     }
 }

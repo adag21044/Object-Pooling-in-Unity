@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,12 +16,6 @@ public class ObjectPooler : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject); // Ensures persistence across scenes if needed
-        InitializePool(); // Initialize your pools here if required
-    }
-
-    private void InitializePool()
-    {
-        // Perform any necessary initialization here
     }
 
     public void SetupPool<T>(T prefab, int poolSize) where T : Component, IPoolable
@@ -37,6 +30,7 @@ public class ObjectPooler : MonoBehaviour
         {
             T instance = Instantiate(prefab);
             instance.gameObject.SetActive(false);
+            (instance as BulletController)?.SetObjectPooler(this);
             poolDictionary[type].Enqueue(instance);
         }
     }
